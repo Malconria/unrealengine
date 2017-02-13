@@ -1,0 +1,45 @@
+
+//I have this in my .h
+
+UPROPERTY()
+	FOnTimelineFloat progressFunction;
+
+	UPROPERTY()
+	FTimeline TScaleTransition;
+
+	UPROPERTY()
+	FTimerHandle TimeHandle;
+
+	UPROPERTY()
+	UCurveFloat* curve;
+  
+  
+  //And this in my constructor:
+  
+  static ConstructorHelpers::FObjectFinder<UCurveFloat> Curvy(TEXT("/Game/_Rescale/_Blueprints/AnimationCurves/Anim_CubeInteractableSwitch"));
+	curve = Curvy.Object;
+	//TScaleTransition = FTimeline(); If i uncomment this line it crash 
+	progressFunction.BindUFunction(this, "UpdateSize");
+	TScaleTransition.AddInterpFloat(curve, progressFunction);
+	static ConstructorHelpers::FObjectFinder<UCurveFloat> Curvy2(TEXT("/Game/_Rescale/_Blueprints/AnimationCurves/Anim_CubeAutoSiwtch"));
+	curve = Curvy2.Object;
+	TScaleTransition.AddInterpFloat(curve, progressFunction);
+	static ConstructorHelpers::FObjectFinder<UCurveFloat> Curvy3(TEXT("/Game/_Rescale/_Blueprints/AnimationCurves/Anim_ScalableColor"));
+	curve = Curvy3.Object;
+	TScaleTransition.AddInterpFloat(curve, progressFunction);
+  
+ // And i can't get why the constructor of the FTimeline give me an error with the garbageCollection :
+
+  Fatal error: [File:D:\Build\++UE4+Release-4.14+Compile\Sync\Engine\Source\Runtime\CoreUObject\Private\UObject\GarbageCollection.cpp] [Line: 547] 
+Invalid object in GC: 0x000000c38dccd668, ReferencingObject: ScalableGeometry /Script/Rescale.Default__ScalableGeometry, ReferencingObjectClass: Class /Script/Rescale.ScalableGeometry, Property Name: DirectionProperty, Offset: 1320, TokenIndex: 32
+
+
+UE4Editor_Core!FDebug::AssertFailed() [d:\build\++ue4+release-4.14+compile\sync\engine\source\runtime\core\private\misc\assertionmacros.cpp:332]
+UE4Editor_CoreUObject!TFastReferenceCollector<FGCReferenceProcessor,FGCCollector,FGCArrayPool,0>::ProcessObjectArray() [d:\build\++ue4+release-4.14+compile\sync\engine\source\runtime\coreuobject\private\uobject\fastreferencecollector.h:281]
+UE4Editor_CoreUObject!TGraphTask<TFastReferenceCollector<FGCReferenceProcessor,FGCCollector,FGCArrayPool,0>::FCollectorTask>::ExecuteTask() [d:\build\++ue4+release-4.14+compile\sync\engine\source\runtime\core\public\async\taskgraphinterfaces.h:868]
+UE4Editor_Core!FTaskThreadAnyThread::ProcessTasks() [d:\build\++ue4+release-4.14+compile\sync\engine\source\runtime\core\private\async\taskgraph.cpp:1255]
+UE4Editor_Core!FTaskThreadAnyThread::ProcessTasksUntilQuit() [d:\build\++ue4+release-4.14+compile\sync\engine\source\runtime\core\private\async\taskgraph.cpp:1149]
+UE4Editor_Core!FTaskThreadBase::Run() [d:\build\++ue4+release-4.14+compile\sync\engine\source\runtime\core\private\async\taskgraph.cpp:621]
+UE4Editor_Core!FRunnableThreadWin::Run() [d:\build\++ue4+release-4.14+compile\sync\engine\source\runtime\core\private\windows\windowsrunnablethread.cpp:74]
+  
+  
